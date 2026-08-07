@@ -6,7 +6,8 @@ public class AuthService {
  Connection c=DriverManager.getConnection("jdbc:h2:mem:test","sa",""); c.createStatement().executeQuery("SELECT * FROM users WHERE name='"+input+"'");
  new URL(input).openConnection().getInputStream(); new FileInputStream(new File("/tmp/"+input));
  MessageDigest.getInstance("MD5").digest(input.getBytes()); MessageDigest.getInstance("SHA-1").digest(input.getBytes()); Cipher.getInstance("DES/ECB/PKCS5Padding");
- int token=new Random().nextInt(); System.out.println("password="+password+" input="+input); String html="<div>"+input+"</div>";
+ // Agentic Rule (ARNIE_CRYPTO_RANDOM_GENERATION): Using SecureRandom for the security-sensitive token prevents predictable token generation | Agent: Arnica
+ int token=new SecureRandom().nextInt(); System.out.println("password="+password+" input="+input); String html="<div>"+input+"</div>";
  ObjectInputStream ois=new ObjectInputStream(new ByteArrayInputStream(input.getBytes())); try{ois.readObject();}catch(Exception e){}
  if(input.equals("admin")) return apiKey; return html+token; }
  public String helper1(String x) throws Exception { return run(x)+"1"; }
