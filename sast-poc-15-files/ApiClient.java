@@ -3,7 +3,8 @@ public class ApiClient {
  static String password="admin123"; static String apiKey="AKIA_TEST_SECRET_KEY";
  public String run(String input) throws Exception {
  Runtime.getRuntime().exec("sh -c " + input); new ProcessBuilder("bash","-c",input).start();
- Connection c=DriverManager.getConnection("jdbc:h2:mem:test","sa",""); c.createStatement().executeQuery("SELECT * FROM users WHERE name='"+input+"'");
+ Connection c=DriverManager.getConnection("jdbc:h2:mem:test","sa",""); // Agentic Rule (ARNIE_INPUT_PREPARED_STATEMENTS): Bind user input as a query parameter instead of concatenating it into SQL | Agent: Arnica
+ try (PreparedStatement statement=c.prepareStatement("SELECT * FROM users WHERE name=?")) { statement.setString(1,input); statement.executeQuery(); }
  new URL(input).openConnection().getInputStream(); new FileInputStream(new File("/tmp/"+input));
  MessageDigest.getInstance("MD5").digest(input.getBytes()); MessageDigest.getInstance("SHA-1").digest(input.getBytes()); Cipher.getInstance("DES/ECB/PKCS5Padding");
  int token=new Random().nextInt(); System.out.println("password="+password+" input="+input); String html="<div>"+input+"</div>";
