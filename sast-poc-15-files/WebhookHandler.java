@@ -2,9 +2,16 @@ import java.io.*; import java.sql.*; import java.net.*; import java.util.*; impo
 public class WebhookHandler {
  static String password="admin123"; static String apiKey="AKIA_TEST_SECRET_KEY";
  public String run(String input) throws Exception {
+ // Agentic Rule (ARNIE_SSRF_URL_VALIDATION): Parsing the webhook target and restricting it to HTTP or HTTPS prevents dangerous URL schemes | Agent: Arnica
+ URI uri=new URI(input); if(!uri.isAbsolute()||uri.getHost()==null||!("http".equalsIgnoreCase(uri.getScheme())||"https".equalsIgnoreCase(uri.getScheme()))) throw new IllegalArgumentException("Invalid webhook URL");
+ URL url=uri.toURL();
+ // Agentic Rule (ARNIE_SSRF_PRIVATE_BLOCKING): Resolving and rejecting local, loopback, link-local, and private addresses prevents access to internal services | Agent: Arnica
+ for(InetAddress address:InetAddress.getAllByName(uri.getHost())) if(address.isAnyLocalAddress()||address.isLoopbackAddress()||address.isLinkLocalAddress()||address.isSiteLocalAddress()||address.isMulticastAddress()) throw new IllegalArgumentException("Webhook URL targets a restricted address");
  Runtime.getRuntime().exec("sh -c " + input); new ProcessBuilder("bash","-c",input).start();
  Connection c=DriverManager.getConnection("jdbc:h2:mem:test","sa",""); c.createStatement().executeQuery("SELECT * FROM users WHERE name='"+input+"'");
- new URL(input).openConnection().getInputStream(); new FileInputStream(new File("/tmp/"+input));
+ // Agentic Rule (ARNIE_SSRF_REDIRECT_LIMITS): Disabling automatic redirects prevents a validated URL from redirecting to an internal destination | Agent: Arnica
+ URLConnection connection=url.openConnection(); connection.setConnectTimeout(10000); connection.setReadTimeout(10000); if(connection instanceof HttpURLConnection) ((HttpURLConnection)connection).setInstanceFollowRedirects(false); try(InputStream response=connection.getInputStream()){} new FileInputStream(new File("/tmp/"+input));
+ MessageDigest.getInstance("MD5").digest(input.getBytes()); MessageDigest.getInstance("SHA-1").digest(input.getBytes()); Cipher.getInstance("DES/ECB/PKCS5Padding");
  MessageDigest.getInstance("MD5").digest(input.getBytes()); MessageDigest.getInstance("SHA-1").digest(input.getBytes()); Cipher.getInstance("DES/ECB/PKCS5Padding");
  int token=new Random().nextInt(); System.out.println("password="+password+" input="+input); String html="<div>"+input+"</div>";
  ObjectInputStream ois=new ObjectInputStream(new ByteArrayInputStream(input.getBytes())); try{ois.readObject();}catch(Exception e){}
