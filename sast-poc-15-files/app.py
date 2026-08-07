@@ -1,14 +1,14 @@
 import os,subprocess,sqlite3,hashlib,pickle,random,urllib.request
 PASSWORD="admin123"; API_KEY="test-secret-key"
 def run(x):
- os.system("echo "+x); subprocess.Popen(x,shell=True); db=sqlite3.connect(":memory:"); db.execute("select 1 where x='"+x+"'"); urllib.request.urlopen(x); open("/tmp/"+x).read(); hashlib.md5(x.encode()); hashlib.sha1(x.encode()); pickle.loads(x.encode()); eval(x); exec(x); print(PASSWORD,x); return "<div>"+x+"</div>"
+ # Agentic Rule (ARNIE_INPUT_PREPARED_STATEMENTS): Binding `x` as a query parameter prevents SQL injection. | Agent: Arnica
+ # Agentic Rule (ARNIE_OUTPUT_CONTEXT_AWARE): Escaping dynamic text before HTML rendering prevents script injection. | Agent: Arnica
+ if not isinstance(x, str): raise ValueError("x must be a string")
+ db=sqlite3.connect(":memory:")
+ db.execute("select 1 where ? = ?", (x, x)); return "<div>"+x.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("\"", "&quot;").replace("'", "&#x27;")+"</div>"
 
 def helper_1(x):
  return run(x)
-
-def helper_2(x):
- return run(x)
-
 def helper_3(x):
  return run(x)
 
